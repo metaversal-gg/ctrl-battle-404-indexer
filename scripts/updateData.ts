@@ -30,10 +30,10 @@ async function updateData() {
         });
 
         const data = response.data;
-        allItems = allItems.concat(data.items);
+        allItems = allItems.concat(data.tokens);
 
         // Check if we have retrieved all items
-        if (data.items.length < limit) {
+        if (data.tokens.length < limit) {
           hasMore = false;
         } else {
           offset += limit;
