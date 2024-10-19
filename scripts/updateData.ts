@@ -1,19 +1,21 @@
-export const runtime = 'nodejs';
-
-import { NextRequest, NextResponse } from 'next/server';
-import pool from '@/lib/db';
+import pool from '../lib/db';
 import axios from 'axios';
 
-export async function GET(request: NextRequest) {
+async function updateData() {
   try {
+    console.log('Script execution started');
+
+    // Step 1: Fetch the current block number
     const currentBlockResponse = await axios.get('https://blockchain.info/q/getblockcount');
     const currentBlock = currentBlockResponse.data;
 
+    // Step 2: Initialize variables for pagination
     const limit = 100;
     let offset = 0;
     let allItems: any[] = [];
     let hasMore = true;
 
+    // Step 3: Fetch data with pagination
     while (hasMore) {
       try {
         const response = await axios.get('https://api-mainnet.magiceden.dev/v2/ord/btc/tokens', {
@@ -28,9 +30,10 @@ export async function GET(request: NextRequest) {
         });
 
         const data = response.data;
-        allItems = allItems.concat(data.tokens);
+        allItems = allItems.concat(data.items);
 
-        if (data.tokens.length < limit) {
+        // Check if we have retrieved all items
+        if (data.items.length < limit) {
           hasMore = false;
         } else {
           offset += limit;
@@ -44,12 +47,14 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Step 4: Process each item
     for (const item of allItems) {
       const inscriptionId = item.id;
       const output = item.output;
       const listed = item.listed;
       const listedAt = item.listedAt;
 
+      // Fetch the corresponding row from the database
       const res = await pool.query(
         `SELECT * FROM main_index WHERE "inscriptionId" = $1 AND "endBlock" IS NULL`,
         [inscriptionId]
@@ -80,9 +85,13 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ message: 'Data updated successfully' });
+    console.log('Data updated successfully');
+    pool.end(); // Close the database connection
   } catch (error: any) {
-    console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('An error occurred:', error);
+    pool.end(); // Ensure the database connection is closed
+    process.exit(1); // Exit with an error code
   }
 }
+
+updateData();
