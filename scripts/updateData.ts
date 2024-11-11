@@ -20,6 +20,11 @@ async function updateData() {
     const currentBlockResponse = await axios.get('https://blockchain.info/q/getblockcount', { httpsAgent });
     const currentBlock = currentBlockResponse.data;
 
+    if (currentBlock < parseInt(process.env.START_BLOCK || '0')) {
+      console.log(`Current block is ${currentBlock}, less than ${process.env.START_BLOCK}.`);
+      return;
+    }
+
     // Step 2: Initialize variables for pagination
     const limit = 100;
     let offset = 0;

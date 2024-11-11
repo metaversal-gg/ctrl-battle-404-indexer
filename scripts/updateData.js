@@ -58,6 +58,10 @@ function updateData() {
                 case 1:
                     currentBlockResponse = _a.sent();
                     currentBlock = currentBlockResponse.data;
+                    if (currentBlock < parseInt(process.env.START_BLOCK || '0')) {
+                        console.log("Current block is ".concat(currentBlock, ", less than ").concat(process.env.START_BLOCK, "."));
+                        return [2 /*return*/];
+                    }
                     limit = 100;
                     offset = 0;
                     allItems = [];
