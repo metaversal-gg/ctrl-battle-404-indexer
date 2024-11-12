@@ -84,10 +84,10 @@ async function updateData() {
         // If no matching row exists and the item is not listed, create a new row
         await pool.query(
           `INSERT INTO "battleOf404"(id, created_at, updated_at, deleted_at, "inscriptionId", owner, utxo, "endAction", "endBlock", details, "startBlock")
-           VALUES (DEFAULT, NOW(), NOW(), NULL, $1, $2, $3, 'NULL', NULL, NULL, $4)`,
+           VALUES (DEFAULT, NOW(), NOW(), NULL, $1, $2, $3, NULL, NULL, NULL, $4)`,
           [inscriptionId, owner, output, currentBlock]
         );
-        console.log(`Inserted new row for inscriptionId: ${inscriptionId}`);
+        console.log(`Inserted new row for unlisted inscriptionId: ${inscriptionId}`);
       } else if (matchingRow.rows.length === 0 && listed) {
         //if no matching row and item is listed
         await pool.query(
@@ -95,7 +95,7 @@ async function updateData() {
            VALUES (DEFAULT, NOW(), NOW(), NULL, $1, $2, $3, 'listed', $4, $5, $4)`,
           [inscriptionId, owner, output, currentBlock, listedAt]
         );
-        console.log(`Inserted new row for inscriptionId: ${inscriptionId}`);
+        console.log(`Inserted new row for listed inscriptionId: ${inscriptionId}`);
       } else if (matchingRow.rows.length > 0) {
         const row = matchingRow.rows[0];
 
