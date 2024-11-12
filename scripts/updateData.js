@@ -52,7 +52,7 @@ function updateData() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 18, , 19]);
+                    _a.trys.push([0, 20, , 21]);
                     console.log('Script execution started');
                     return [4 /*yield*/, axios_1.default.get('https://blockchain.info/q/getblockcount', { httpsAgent: httpsAgent })];
                 case 1:
@@ -112,7 +112,7 @@ function updateData() {
                     _i = 0, allItems_1 = allItems;
                     _a.label = 9;
                 case 9:
-                    if (!(_i < allItems_1.length)) return [3 /*break*/, 17];
+                    if (!(_i < allItems_1.length)) return [3 /*break*/, 19];
                     item = allItems_1[_i];
                     inscriptionId = item.id;
                     output = item.output;
@@ -129,37 +129,46 @@ function updateData() {
                     // If no matching row exists and the item is not listed, create a new row
                     _a.sent();
                     console.log("Inserted new row for unlisted inscriptionId: ".concat(inscriptionId));
-                    return [3 /*break*/, 16];
+                    return [3 /*break*/, 18];
                 case 12:
-                    if (!(matchingRow.rows.length > 0)) return [3 /*break*/, 16];
-                    row = matchingRow.rows[0];
-                    if (!(output !== row.utxo)) return [3 /*break*/, 14];
-                    return [4 /*yield*/, db_1.default.query("UPDATE \"battleOf404\"\n             SET \"endBlock\" = $1, \"endAction\" = 'transfer', details = $2, updated_at = NOW()\n             WHERE \"inscriptionId\" = $3 AND \"endBlock\" IS NULL", [currentBlock, output, inscriptionId])];
+                    if (!(matchingRow.rows.length === 0 && listed)) return [3 /*break*/, 14];
+                    //if no matching row and item is listed
+                    return [4 /*yield*/, db_1.default.query("INSERT INTO \"battleOf404\"(id, created_at, updated_at, deleted_at, \"inscriptionId\", owner, utxo, \"endAction\", \"endBlock\", details, \"startBlock\")\n           VALUES (DEFAULT, NOW(), NOW(), NULL, $1, $2, $3, 'listed', $4, $5, $4)", [inscriptionId, owner, output, currentBlock, listedAt])];
                 case 13:
+                    //if no matching row and item is listed
                     _a.sent();
-                    console.log("Updated row for inscriptionId: ".concat(inscriptionId, " (transfer)"));
-                    _a.label = 14;
+                    console.log("Inserted new row for listed inscriptionId: ".concat(inscriptionId));
+                    return [3 /*break*/, 18];
                 case 14:
-                    if (!(listed === true)) return [3 /*break*/, 16];
-                    return [4 /*yield*/, db_1.default.query("UPDATE \"battleOf404\"\n             SET \"endBlock\" = $1, \"endAction\" = 'listed', details = $2, updated_at = NOW()\n             WHERE \"inscriptionId\" = $3 AND \"endBlock\" IS NULL", [currentBlock, listedAt, inscriptionId])];
+                    if (!(matchingRow.rows.length > 0)) return [3 /*break*/, 18];
+                    row = matchingRow.rows[0];
+                    if (!(output !== row.utxo)) return [3 /*break*/, 16];
+                    return [4 /*yield*/, db_1.default.query("UPDATE \"battleOf404\"\n             SET \"endBlock\" = $1, \"endAction\" = 'transfer', details = $2, updated_at = NOW()\n             WHERE \"inscriptionId\" = $3 AND \"endBlock\" IS NULL", [currentBlock, output, inscriptionId])];
                 case 15:
                     _a.sent();
-                    console.log("Updated row for inscriptionId: ".concat(inscriptionId, " (listed)"));
+                    console.log("Updated row for inscriptionId: ".concat(inscriptionId, " (transfer)"));
                     _a.label = 16;
                 case 16:
+                    if (!(listed === true)) return [3 /*break*/, 18];
+                    return [4 /*yield*/, db_1.default.query("UPDATE \"battleOf404\"\n             SET \"endBlock\" = $1, \"endAction\" = 'listed', details = $2, updated_at = NOW()\n             WHERE \"inscriptionId\" = $3 AND \"endBlock\" IS NULL", [currentBlock, listedAt, inscriptionId])];
+                case 17:
+                    _a.sent();
+                    console.log("Updated row for inscriptionId: ".concat(inscriptionId, " (listed)"));
+                    _a.label = 18;
+                case 18:
                     _i++;
                     return [3 /*break*/, 9];
-                case 17:
+                case 19:
                     console.log('Data updated successfully');
                     db_1.default.end();
-                    return [3 /*break*/, 19];
-                case 18:
+                    return [3 /*break*/, 21];
+                case 20:
                     error_2 = _a.sent();
                     console.error('An error occurred:', error_2);
                     db_1.default.end();
                     process.exit(1);
-                    return [3 /*break*/, 19];
-                case 19: return [2 /*return*/];
+                    return [3 /*break*/, 21];
+                case 21: return [2 /*return*/];
             }
         });
     });
