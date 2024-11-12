@@ -88,14 +88,6 @@ async function updateData() {
           [inscriptionId, owner, output, currentBlock]
         );
         console.log(`Inserted new row for unlisted inscriptionId: ${inscriptionId}`);
-      } else if (matchingRow.rows.length === 0 && listed) {
-        //if no matching row and item is listed
-        await pool.query(
-          `INSERT INTO "battleOf404"(id, created_at, updated_at, deleted_at, "inscriptionId", owner, utxo, "endAction", "endBlock", details, "startBlock")
-           VALUES (DEFAULT, NOW(), NOW(), NULL, $1, $2, $3, 'listed', $4, $5, $4)`,
-          [inscriptionId, owner, output, currentBlock, listedAt]
-        );
-        console.log(`Inserted new row for listed inscriptionId: ${inscriptionId}`);
       } else if (matchingRow.rows.length > 0) {
         const row = matchingRow.rows[0];
 
