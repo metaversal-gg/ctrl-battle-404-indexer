@@ -124,11 +124,11 @@ function updateData() {
                     matchingRow = _a.sent();
                     if (!(matchingRow.rows.length === 0 && !listed)) return [3 /*break*/, 12];
                     // If no matching row exists and the item is not listed, create a new row
-                    return [4 /*yield*/, db_1.default.query("INSERT INTO \"battleOf404\"(id, created_at, updated_at, deleted_at, \"inscriptionId\", owner, utxo, \"endAction\", \"endBlock\", details, \"startBlock\")\n           VALUES (DEFAULT, NOW(), NOW(), NULL, $1, $2, $3, 'NULL', NULL, NULL, $4)", [inscriptionId, owner, output, currentBlock])];
+                    return [4 /*yield*/, db_1.default.query("INSERT INTO \"battleOf404\"(id, created_at, updated_at, deleted_at, \"inscriptionId\", owner, utxo, \"endAction\", \"endBlock\", details, \"startBlock\")\n           VALUES (DEFAULT, NOW(), NOW(), NULL, $1, $2, $3, NULL, NULL, NULL, $4)", [inscriptionId, owner, output, currentBlock])];
                 case 11:
                     // If no matching row exists and the item is not listed, create a new row
                     _a.sent();
-                    console.log("Inserted new row for inscriptionId: ".concat(inscriptionId));
+                    console.log("Inserted new row for unlisted inscriptionId: ".concat(inscriptionId));
                     return [3 /*break*/, 18];
                 case 12:
                     if (!(matchingRow.rows.length === 0 && listed)) return [3 /*break*/, 14];
@@ -137,7 +137,7 @@ function updateData() {
                 case 13:
                     //if no matching row and item is listed
                     _a.sent();
-                    console.log("Inserted new row for inscriptionId: ".concat(inscriptionId));
+                    console.log("Inserted new row for listed inscriptionId: ".concat(inscriptionId));
                     return [3 /*break*/, 18];
                 case 14:
                     if (!(matchingRow.rows.length > 0)) return [3 /*break*/, 18];
